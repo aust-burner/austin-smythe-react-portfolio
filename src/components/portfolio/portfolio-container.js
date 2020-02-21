@@ -6,14 +6,21 @@ export default class portfolioContainer extends Component {
     constructor() {
         super();
 
-        console.log("portfolio container has been rendered")
+        this.state = {
+            pageTitle: "Welcome to my portfolio",
+            data: [
+                {title: "Quip" },
+                {title: "Eventbrite" },
+                {title: "Ministry Safe" }
+            ]
+        };
     }
 
     portfolioItems() {
-        const data = ["Quip", "Eventbrite", "Ministry Safe"];
+        
 
-       return data.map(item => {
-           return <PortfolioItem title={item} url="google.com"/>;
+       return this.state.data.map(item => {
+           return <PortfolioItem title={item.title} url="google.com"/>;
        })
     }
 
@@ -21,7 +28,7 @@ export default class portfolioContainer extends Component {
     render() {
         return (
             <div className='portfolio-container'>
-                <h2> Portfolio Items go here </h2>
+                <h2>{this.state.pageTitle}</h2>
                 
                 {this.portfolioItems()}
             </div>
