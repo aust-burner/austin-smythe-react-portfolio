@@ -3,6 +3,13 @@ import React, { Component } from 'react';
 import PortfolioItem from "./portfolio-items"
 
 export default class portfolioContainer extends Component {
+    constructor() {
+        super();
+        
+        console.log("portfolio container has been rendered")
+    }
+
+
     render() {
         return (
             <div className='portfolio-container'>
