@@ -17,14 +17,19 @@ export default class navigationContainer extends Component {
                     Home
                 </NavLink>
 
-                <NavLink exact to="/about-me">
+                <NavLink exact to="/about-me" activeClassName="nav-link-active">
                     About
                 </NavLink>
 
-                    <button>Home</button>
-                    <button>About</button>
-                    <button>Contact</button>
-                    <button>Blog</button>
+                <NavLink exact to="/contact" activeClassName="nav-link-active">
+                    Contact
+                </NavLink>
+
+                <NavLink exact to="/Blog" activeClassName="nav-link-active">
+                    Blog
+                </NavLink>
+
+                    
                     {false ? <button>Add Blog</button> : null}
                 </div>
             )
