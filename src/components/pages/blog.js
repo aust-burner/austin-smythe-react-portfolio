@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import BlogItem from "../blog/blog-item";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
 class Blog extends Component {
   constructor() {
@@ -16,16 +16,40 @@ class Blog extends Component {
     };
 
     this.getBlogItems = this.getBlogItems.bind(this);
-    this.activateInfiniteScroll();
+    this.onScroll = this.onScroll.bind(this);
+    window.addEventListener("scroll", this.onScroll, false);
+  }
+
+  onScroll() {
+    if ( 
+      this.state.isLoading ||
+      this.state.blogItems.length === this.state.totalCount
+    ) {
+      return;
+    }
+  
+    if (
+      window.innerHeight + document.documentElement.scrollTop ===
+      document.documentElement.offsetHeight
+    ) {
+      this.getBlogItems();
+    }
   }
 
   activateInfiniteScroll() {
     window.onscroll = () => {
       if (
+        this.state.isLoading ||
+        this.state.blogItems.length === this.state.totalCount
+      ) { 
+        return;
+      }
+
+      if (
         window.innerHeight + document.documentElement.scrollTop ===
         document.documentElement.offsetHeight
       ) {
-        console.log("get more posts");
+        this.getBlogItems();
       }
     };
   }
@@ -36,14 +60,19 @@ class Blog extends Component {
     });
 
     axios
-      .get("https://austinsmythe.devcamp.space/portfolio/portfolio_blogs", {
-        withCredentials: true
-      })
+      .get(
+        `https://austinsmythe.devcamp.space/portfolio/portfolio_blogs?page=${this
+          .state.currentPage}`,
+        {
+          withCredentials: true
+        }
+      )
       .then(response => {
-        console.log(response)
+        console.log("gettting", response.data);
         this.setState({
-          blogItems: response.data.portfolio_blogs,
-          totalCount: response.data.meta.total_records
+          blogItems: this.state.blogItems.concat(response.data.portfolio_blogs),
+          totalCount: response.data.meta.total_records,
+          isLoading: false
         });
       })
       .catch(error => {
@@ -54,6 +83,10 @@ class Blog extends Component {
   componentWillMount() {
     this.getBlogItems();
   }
+  
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.onScroll, false);
+  }
 
   render() {
     const blogRecords = this.state.blogItems.map(blogItem => {
@@ -62,16 +95,15 @@ class Blog extends Component {
 
     return (
       <div className="blog-container">
-    <div className="content-container">{blogRecords}</div>
+        <div className="content-container">{blogRecords}</div>
 
-      {this.state.isLoading ?  ( 
-        <div className="content-loader">
-          <FontAwesomeIcon icon="spinner" spin />
-        </div>
-        
-    ) : null }
-    </div>
-    )
+        {this.state.isLoading ? (
+          <div className="content-loader">
+            <FontAwesomeIcon icon="spinner" spin />
+          </div>
+        ) : null}
+      </div>
+    );
   }
 }
 
